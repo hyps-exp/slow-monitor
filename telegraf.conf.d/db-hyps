@@ -1,0 +1,55 @@
+[global_tags]
+  environment = "production"
+
+[agent]
+  interval = "10s"
+  round_interval = true
+  metric_batch_size = 1000
+  metric_buffer_limit = 10000
+  collection_jitter = "0s"
+  flush_interval = "10s"
+  flush_jitter = "0s"
+  precision = "" # default
+  debug = false
+  quiet = false
+  # logformat = "text"
+  # logfile = ""
+  # logfile_rotation_interval = "0h"
+  # logfile_rotation_max_size = "0MB"
+  # logfile_rotation_max_archives = 5
+  # log_with_timezone = ""
+  # hostname = ""
+  # omit_hostname = false
+  # snmp_translator = "netsnmp"
+  # statefile = ""
+  # skip_processors_after_aggregators = false
+
+# Configuration for sending metrics to InfluxDB
+[[outputs.influxdb_v2]]
+  urls = ["http://localhost:8086"]
+  token = "-iT93bQ-4tDWCQVR42vBoRbE58wzxIWsDYB6S4vfgR9BiiRSrfoR90OpaYXtaBuEkAPgfrv0YrFtqQPFFn81Vg=="
+  organization = "hyps"
+  bucket = "telegraf"
+
+# Read metrics about cpu usage
+[[inputs.cpu]]
+  ## Whether to report per-cpu stats or not
+  percpu = true
+  ## Whether to report total system cpu stats or not
+  totalcpu = true
+  ## If true, collect raw CPU time metrics
+  collect_cpu_time = false
+  ## If true, compute and report the sum of all non-idle CPU states
+  ## NOTE: The resulting 'time_active' field INCLUDES 'iowait'!
+  report_active = false
+  ## If true and the info is available then add core_id and physical_id tags
+  core_tags = false
+
+[[inputs.net]]
+  interfaces = ["enp5s0"]
+  fielddrop = ["icmp_*" , "ip_*"]
+
+# Read metrics about memory usage
+[[inputs.mem]]
+  # no configuration
+
