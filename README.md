@@ -19,7 +19,7 @@ slow-monitor using Influxdb2, Telegraf, Grafana...
 
 # Install
 
-## Influxdb2
+## InfluxDB 2
 
 ### InfluxDBリポジトリの追加
 
@@ -73,4 +73,12 @@ sudo firewall-cmd --reload
 ```bash
 influx org list
 influx bucket list
+```
+
+### データ保存場所
+
+`/etc/influxdb/config.toml`で、データ保存場所を変更可能。
+```toml
+bolt-path = "/custom/path/influxdb2/influxd.bolt"
+engine-path = "/custom/path/influxdb2/engine"
 ```
