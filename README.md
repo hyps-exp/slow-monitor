@@ -142,3 +142,55 @@ TelegrafをInfluxDB 2.xと接続するためのtelegraf.confの設定例を以�
 ```bash
 sudo systemctl enable --now telegraf
 ```
+
+## Grafana
+
+### Grafanaリポジトリの追加
+Grafanaの公式リポジトリを/etc/yum.repos.d/grafana.repoに追加。
+
+```bash
+sudo tee /etc/yum.repos.d/grafana.repo <<EOF
+[grafana]
+name=Grafana Repository
+baseurl=https://rpm.grafana.com/oss/rpm
+repo_gpgcheck=1
+enabled=1
+gpgcheck=1
+gpgkey=https://rpm.grafana.com/gpg.key
+EOF
+```
+
+### Grafanaのインストール
+
+```bash
+sudo dnf install grafana
+```
+
+### Grafanaサービスの起動と自動起動設定
+
+```bash
+sudo systemctl enable --now grafana-server
+```
+### ファイアウォールの設定（必要な場合）
+
+AlmaLinuxのファイアウォールが有効な場合、Grafanaのデフォルトポート3000を許可。
+
+```bash
+sudo firewall-cmd --add-port=3000/tcp --permanent
+sudo firewall-cmd --reload
+```
+
+### WebブラウザからGrafanaにアクセス
+インストールとサービスの起動が完了したら、Webブラウザで以下のURLにアクセスして、GrafanaのWebインターフェースを開く。
+
+```arduino
+http://YOUR_SERVER_IP:3000
+```
+
+### 初期ログイン情報
+初回ログインのデフォルトのユーザー名とパスワードは
+
+- ユーザー名: admin
+- パスワード: admin
+
+ログイン後、パスワードの変更が求められるので、新しいパスワードを設定する。
