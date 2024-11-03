@@ -82,3 +82,63 @@ influx bucket list
 bolt-path = "/custom/path/influxdb2/influxd.bolt"
 engine-path = "/custom/path/influxdb2/engine"
 ```
+
+## Telegraf
+
+### Telegrafのインストール
+
+```bash
+sudo dnf install telegraf
+```
+
+### Telegrafの設定
+
+TelegrafをInfluxDB 2.xと接続するためのtelegraf.confの設定例を以下に示す。
+ここでは、InfluxDB 2.xにデータを送信するためのoutputs.influxdb_v2プラグインと、システムの基本的なメトリクス（CPU、メモリなど）を収集する設定を含む。
+
+```toml
+[global_tags]
+  environment = "production"
+
+[agent]
+  interval = "10s"
+  round_interval = true
+  metric_batch_size = 1000
+  metric_buffer_limit = 10000
+  collection_jitter = "0s"
+  flush_interval = "10s"
+  flush_jitter = "0s"
+  precision = ""
+  debug = false
+  quiet = false
+  logfile = ""
+
+# CPU メトリクスの収集
+[[inputs.cpu]]
+  percpu = true
+  totalcpu = true
+  collect_cpu_time = false
+  report_active = false
+
+# メモリ メトリクスの収集
+[[inputs.mem]]
+
+# InfluxDB 2.x 出力プラグイン
+[[outputs.influxdb_v2]]
+  urls = ["http://localhost:8086"]
+  token = "YOUR_INFLUXDB_TOKEN"
+  organization = "YOUR_ORG_NAME"
+  bucket = "YOUR_BUCKET_NAME"
+  timeout = "5s"
+```
+
+設定ファイルの各項目について
+- urls: InfluxDB 2.xのURL。デフォルトはhttp://localhost:8086だが、リモートサーバの場合はホスト名やIPアドレスを指定。
+- token: InfluxDB 2.xの認証トークンです。Web UIから発行。
+- organization: InfluxDB 2.xの組織名。
+- bucket: データを保存するバケット名。Web UIでバケットを作成しておく必要がある。
+設定ファイルを保存したら、Telegrafを起動して設定を反映させる。
+
+```bash
+sudo systemctl enable --now telegraf
+```
