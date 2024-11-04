@@ -24,12 +24,30 @@
   # statefile = ""
   # skip_processors_after_aggregators = false
 
+[[processors.regex]]
+  namepass = ["hddaq*"]
+  [[processors.regex.tags]]
+    key = "_measurement"
+    pattern = "^hddaq.*"
+    replacement = "hddaq"
+
 # Configuration for sending metrics to InfluxDB
 [[outputs.influxdb_v2]]
   urls = ["http://172.16.205.212:8086"]
   token = "-iT93bQ-4tDWCQVR42vBoRbE58wzxIWsDYB6S4vfgR9BiiRSrfoR90OpaYXtaBuEkAPgfrv0YrFtqQPFFn81Vg=="
   organization = "hyps"
   bucket = "telegraf"
+  timeout = "5s"
+
+[[outputs.influxdb_v2]]
+  urls = ["http://172.16.205.212:8086"]
+  token = "-iT93bQ-4tDWCQVR42vBoRbE58wzxIWsDYB6S4vfgR9BiiRSrfoR90OpaYXtaBuEkAPgfrv0YrFtqQPFFn81Vg=="
+  organization = "hyps"
+  bucket = "hddaq"
+  timeout = "5s"
+  # [outputs.influxdb_v2.tagpass]
+  #   _measurement = ["hddaq*"]
+  namepass = ["hddaq*"]
 
 # Read metrics about cpu usage
 [[inputs.cpu]]
@@ -52,3 +70,8 @@
 # Read metrics about memory usage
 [[inputs.mem]]
   # no configuration
+
+[[inputs.exec]]
+  commands = ["python /home/sks/slow-monitor/python/hddaq.py"]
+  timeout = "5s"
+  data_format = "influx"
