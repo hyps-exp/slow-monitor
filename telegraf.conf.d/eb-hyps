@@ -36,7 +36,7 @@
   urls = ["http://172.16.205.212:8086"]
   token = "-iT93bQ-4tDWCQVR42vBoRbE58wzxIWsDYB6S4vfgR9BiiRSrfoR90OpaYXtaBuEkAPgfrv0YrFtqQPFFn81Vg=="
   organization = "hyps"
-  bucket = "telegraf"
+  bucket = "resource"
   timeout = "5s"
 
 [[outputs.influxdb_v2]]
