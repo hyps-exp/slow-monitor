@@ -29,7 +29,7 @@
   urls = ["http://localhost:8086"]
   token = "-iT93bQ-4tDWCQVR42vBoRbE58wzxIWsDYB6S4vfgR9BiiRSrfoR90OpaYXtaBuEkAPgfrv0YrFtqQPFFn81Vg=="
   organization = "hyps"
-  bucket = "resource"
+  bucket = "system"
 
 # Read metrics about cpu usage
 [[inputs.cpu]]
