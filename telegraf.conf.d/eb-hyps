@@ -29,7 +29,7 @@
   urls = ["http://172.16.205.212:8086"]
   token = "-iT93bQ-4tDWCQVR42vBoRbE58wzxIWsDYB6S4vfgR9BiiRSrfoR90OpaYXtaBuEkAPgfrv0YrFtqQPFFn81Vg=="
   organization = "hyps"
-  bucket = "resource"
+  bucket = "system"
   timeout = "5s"
   bucket_tag = "dest_bucket"
 
@@ -54,6 +54,18 @@
 # Read metrics about memory usage
 [[inputs.mem]]
   # no configuration
+
+[[inputs.disk]]
+  mount_points = ["/", "/misc/hdd1", "/misc/hdd2"]
+
+[[inputs.diskio]]
+  devices = ["sda", "sdc"]
+
+[[inputs.sensors]]
+
+[[inputs.smart]]
+  path_smartctl = "/usr/sbin/smartctl"
+  devices = ["sda", "sdc"]
 
 [[inputs.exec]]
   commands = ["python /home/sks/slow-monitor/python/hddaq.py"]
