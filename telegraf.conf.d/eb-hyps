@@ -26,34 +26,25 @@
 
 # Configuration for sending metrics to InfluxDB
 [[outputs.influxdb_v2]]
-  urls = ["http://172.16.205.212:8086"]
+  urls = ["http://db-hyps.monitor.hypsnet:8086"]
   token = "-iT93bQ-4tDWCQVR42vBoRbE58wzxIWsDYB6S4vfgR9BiiRSrfoR90OpaYXtaBuEkAPgfrv0YrFtqQPFFn81Vg=="
   organization = "hyps"
   bucket = "system"
   timeout = "5s"
   bucket_tag = "dest_bucket"
 
-# Read metrics about cpu usage
 [[inputs.cpu]]
-  ## Whether to report per-cpu stats or not
   percpu = true
-  ## Whether to report total system cpu stats or not
   totalcpu = true
-  ## If true, collect raw CPU time metrics
   collect_cpu_time = false
-  ## If true, compute and report the sum of all non-idle CPU states
-  ## NOTE: The resulting 'time_active' field INCLUDES 'iowait'!
   report_active = false
-  ## If true and the info is available then add core_id and physical_id tags
   core_tags = false
 
 [[inputs.net]]
   interfaces = ["en*"]
   fielddrop = ["icmp_*" , "ip_*"]
 
-# Read metrics about memory usage
 [[inputs.mem]]
-  # no configuration
 
 [[inputs.disk]]
   mount_points = ["/", "/misc/hdd1", "/misc/hdd2"]
@@ -68,15 +59,16 @@
   devices = ["sda", "sdc"]
 
 [[inputs.exec]]
-  commands = ["python /home/sks/slow-monitor/python/hddaq.py"]
+  commands = ["python /home/sks/slow-monitor/telegraf.exec/hddaq.py"]
   timeout = "5s"
   data_format = "influx"
   [inputs.exec.tags]
     dest_bucket = "hddaq"
 
-[[inputs.exec]]
-  commands = ["python /home/sks/slow-monitor/python/caenhv-n1470.py"]
-  timeout = "5s"
-  data_format = "influx"
-  [inputs.exec.tags]
-    dest_bucket = "caenhv"
+# [[inputs.exec]]
+#   commands = ["python /home/sks/slow-monitor/python/caenhv-n1470.py"]
+#   timeout = "5s"
+#   data_format = "influx"
+#   [inputs.exec.tags]
+#     dest_bucket = "caenhv"
+

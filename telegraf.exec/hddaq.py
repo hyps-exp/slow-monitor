@@ -27,8 +27,8 @@ def read_comment(path=comment_txt):
 
 #______________________________________________________________________________
 if __name__ == '__main__':
-  print(f'hddaq.runnumber value={read(runno_txt)}i')
-  print(f'hddaq.starttime value="{read(starttime_txt)}"')
-  print(f'hddaq.maxevent value={read(maxevent_txt)}i')
-  print(f'hddaq.trig value="{read(trig_txt)}"')
-  print(f'hddaq.comment value="{read_comment()}"')
+  print(f'hddaq,data_dir="{data_dir}" runnumber={read(runno_txt)}i,'+
+        f'starttime="{read(starttime_txt)}",'+
+        f'maxevent={read(maxevent_txt)}i,'+
+        f'trig="{read(trig_txt)}",'+
+        f'comment="{read_comment()}"')
