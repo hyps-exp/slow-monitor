@@ -1,6 +1,6 @@
 from influxdb_client import InfluxDBClient
 
-host = '172.16.205.212'
+host = 'localhost'
 url = f'http://{host}:8086'
 token = '-iT93bQ-4tDWCQVR42vBoRbE58wzxIWsDYB6S4vfgR9BiiRSrfoR90OpaYXtaBuEkAPgfrv0YrFtqQPFFn81Vg=='
 org = 'hyps'

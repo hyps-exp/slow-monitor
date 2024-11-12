@@ -29,6 +29,8 @@
   token = "-iT93bQ-4tDWCQVR42vBoRbE58wzxIWsDYB6S4vfgR9BiiRSrfoR90OpaYXtaBuEkAPgfrv0YrFtqQPFFn81Vg=="
   organization = "hyps"
   bucket = "system"
+  timeout = "5s"
+  bucket_tag = "dest_bucket"
 
 [[inputs.cpu]]
   percpu = true
@@ -44,3 +46,17 @@
 [[inputs.mem]]
 
 [[inputs.sensors]]
+
+[[inputs.exec]]
+  commands = ["python /home/sks/slow-monitor/telegraf.exec/caenhv-n1470.py"]
+  timeout = "5s"
+  data_format = "influx"
+  [inputs.exec.tags]
+    dest_bucket = "caenhv"
+
+[[inputs.exec]]
+  commands = ["python /home/sks/slow-monitor/telegraf.exec/logger.py 192.168.20.21"]
+  timeout = "10s"
+  data_format = "influx"
+  [inputs.exec.tags]
+    dest_bucket = "logger"

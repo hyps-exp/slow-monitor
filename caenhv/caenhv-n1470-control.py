@@ -59,7 +59,7 @@ def update_values():
     query = f'''
 from(bucket: "{bucket}")
     |> range(start: -1h)
-    |> filter(fn: (r) => r["_measurement"] == "caenhv.n1470")
+    |> filter(fn: (r) => r["_measurement"] == "n1470")
     |> group(columns: ["module_id", "channel", "_field"])
     |> last()
 '''

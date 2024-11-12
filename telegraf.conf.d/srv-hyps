@@ -53,8 +53,10 @@
 
 [[inputs.mem]]
 
+[[inputs.sensors]]
+
 [[inputs.exec]]
-  commands = ["python /home/sks/slow-monitor/python/network.py"]
+  commands = ["python /home/sks/slow-monitor/telegraf.exec/network.py"]
   timeout = "5s"
   data_format = "influx"
   [inputs.exec.tags]
