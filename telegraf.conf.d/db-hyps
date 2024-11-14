@@ -60,3 +60,10 @@
   data_format = "influx"
   [inputs.exec.tags]
     dest_bucket = "logger"
+
+[[inputs.exec]]
+  commands = ["python /home/sks/slow-monitor/telegraf.exec/kikusui.py"]
+  timeout = "10s"
+  data_format = "influx"
+  [inputs.exec.tags]
+    dest_bucket = "threshold"
