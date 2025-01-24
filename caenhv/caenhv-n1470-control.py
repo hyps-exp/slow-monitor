@@ -2,6 +2,7 @@ import curses
 import serial
 import re
 import socket
+import sys
 import time
 import threading
 
@@ -36,7 +37,10 @@ def initialize_socket():
   global sock
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   sock.settimeout(1)
-  sock.connect((HOST, PORT))
+  try:
+    sock.connect((HOST, PORT))
+  except ConnectionRefusedError:
+    sys.exit(1)
 
 def close_socket():
   global sock

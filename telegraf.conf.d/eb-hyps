@@ -47,19 +47,19 @@
 [[inputs.mem]]
 
 [[inputs.disk]]
-  mount_points = ["/", "/misc/hdd1", "/misc/hdd2"]
+  mount_points = ["/mnt/raid"]
 
 [[inputs.diskio]]
-  devices = ["sda", "sdc"]
+  devices = ["sda"]
 
 [[inputs.sensors]]
 
 [[inputs.smart]]
   path_smartctl = "/usr/sbin/smartctl"
-  devices = ["sda", "sdc"]
+  devices = ["sda"]
 
 [[inputs.exec]]
-  commands = ["python /home/sks/slow-monitor/telegraf.exec/hddaq.py"]
+  commands = ["python /home/sks/software/slow-monitor/telegraf.exec/hddaq.py"]
   timeout = "5s"
   data_format = "influx"
   [inputs.exec.tags]
@@ -71,4 +71,3 @@
 #   data_format = "influx"
 #   [inputs.exec.tags]
 #     dest_bucket = "caenhv"
-

@@ -2,7 +2,7 @@
 
 import os
 
-data_dir = '/home/axis/daq/tmpdata'
+data_dir = '/mnt/raid/rawdata'
 misc_dir = os.path.join(data_dir, 'misc')
 runno_txt = os.path.join(misc_dir, 'runno.txt')
 starttime_txt = os.path.join(misc_dir, 'starttime.txt')
