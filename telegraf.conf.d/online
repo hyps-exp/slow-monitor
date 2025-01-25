@@ -1,0 +1,80 @@
+[global_tags]
+  environment = "production"
+
+[agent]
+  interval = "5s"
+  round_interval = true
+  metric_batch_size = 1000
+  metric_buffer_limit = 10000
+  collection_jitter = "0s"
+  flush_interval = "5s"
+  flush_jitter = "0s"
+  precision = "" # default
+  debug = false
+  quiet = false
+  # logformat = "text"
+  # logfile = ""
+  # logfile_rotation_interval = "0h"
+  # logfile_rotation_max_size = "0MB"
+  # logfile_rotation_max_archives = 5
+  # log_with_timezone = ""
+  # hostname = ""
+  # omit_hostname = false
+  # snmp_translator = "netsnmp"
+  # statefile = ""
+  # skip_processors_after_aggregators = false
+
+# Configuration for sending metrics to InfluxDB
+[[outputs.influxdb_v2]]
+  urls = ["http://db-hyps.monitor.hypsnet:8086"]
+  token = "-iT93bQ-4tDWCQVR42vBoRbE58wzxIWsDYB6S4vfgR9BiiRSrfoR90OpaYXtaBuEkAPgfrv0YrFtqQPFFn81Vg=="
+  organization = "hyps"
+  bucket = "system"
+  timeout = "5s"
+  bucket_tag = "dest_bucket"
+
+[[inputs.cpu]]
+  percpu = true
+  totalcpu = true
+  collect_cpu_time = false
+  report_active = false
+  core_tags = false
+
+# [[inputs.net]]
+#   interfaces = ["en*"]
+#   fielddrop = ["icmp_*" , "ip_*"]
+
+# [[inputs.mem]]
+
+# [[inputs.disk]]
+#   mount_points = ["/", "/misc/hdd1", "/misc/hdd2"]
+
+# [[inputs.diskio]]
+#   devices = ["sda", "sdc"]
+
+[[inputs.sensors]]
+
+# [[inputs.smart]]
+#   path_smartctl = "/usr/sbin/smartctl"
+#   devices = ["sda", "sdc"]
+
+[[inputs.exec]]
+  commands = ["python /home/sks/software/slow-monitor/telegraf.exec/scaler.py"]
+  timeout = "5s"
+  data_format = "influx"
+  [inputs.exec.tags]
+    dest_bucket = "scaler"
+
+# [[inputs.exec]]
+#   commands = ["python /home/sks/slow-monitor/telegraf.exec/hddaq.py"]
+#   timeout = "5s"
+#   data_format = "influx"
+#   [inputs.exec.tags]
+#     dest_bucket = "hddaq"
+
+# [[inputs.exec]]
+#   commands = ["python /home/sks/slow-monitor/python/caenhv-n1470.py"]
+#   timeout = "5s"
+#   data_format = "influx"
+#   [inputs.exec.tags]
+#     dest_bucket = "caenhv"
