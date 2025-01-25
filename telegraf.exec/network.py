@@ -18,7 +18,7 @@ def parse_dhcpd_conf(file_path):
         "hostname": hostname,
         "ip_address": ip_address,
         "mac_address": mac_address,
-        "is_static": True
+        "static": True
       })
   return entries
 
@@ -40,15 +40,15 @@ def parse_dhcpd_leases(file_path):
         ends = datetime.strptime(ends_match.group(1), "%Y/%m/%d %H:%M:%S")
         mac_address = mac_match.group(1)
         hostname = hostname_match.group(1) if hostname_match else "unknown"
-        is_active = starts <= current_time <= ends
+        active = starts <= current_time <= ends
         entries.append({
           "hostname": hostname,
           "ip_address": ip_address,
           "mac_address": mac_address,
           "starts": starts,
           "ends": ends,
-          "is_active": is_active,
-          "is_static": False
+          "active": active,
+          "static": False
         })
   return entries
 
@@ -60,15 +60,15 @@ if __name__ == '__main__':
   lease_entries = parse_dhcpd_leases(dhcpd_leases_path)
 
   for entry in static_entries + lease_entries:
-    active_status = "true" if entry.get("is_active", True) else "false"
-    static_status = "true" if entry["is_static"] else "false"
-    # starts_timestamp = (int(entry.get("starts", datetime.min).timestamp())
-    #                     if "starts" in entry else None)
-    # ends_timestamp = (int(entry.get("ends", datetime.min).timestamp())
-    #                   if "ends" in entry else None)
-    print(f'network.dhcp_host,mac_address={entry["mac_address"]},'
-          f'hostname={entry["hostname"]} '
-          f'ip_address="{entry["ip_address"]}",'
-          f'is_active="{active_status}",'
-          f'is_static="{static_status}"')
-          # f'starts={starts_timestamp},ends={ends_timestamp}')
+    active_status = "true" if entry.get("active", True) else "false"
+    static_status = "true" if entry["static"] else "false"
+    starts_timestamp = (entry.get("starts", datetime.min) #.timestamp()
+                        if "starts" in entry else None)
+    ends_timestamp = (entry.get("ends", datetime.min) #.timestamp()
+                      if "ends" in entry else None)
+    print(f'dhcp,ip_address={entry["ip_address"]} '
+          f'hostname="{entry["hostname"]}",'
+          f'mac_address="{entry["mac_address"]}",'
+          f'active="{active_status}",'
+          f'static="{static_status}",'
+          f'lease_start="{starts_timestamp}",lease_end="{ends_timestamp}"')
