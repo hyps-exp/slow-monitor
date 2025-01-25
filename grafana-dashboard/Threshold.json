@@ -1,0 +1,434 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 5,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "ee2sy3vroccu8e"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"threshold\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"kikusui\" and r.host == \"kikusui1\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> keep(columns: [\"_time\", \"imon\", \"vmon\", \"outp\", \"operation_status\", \"questionable_status\"])\n  |> sort(columns: [\"_time\"], desc: true)\n  |> limit(n: 10)\n//  |> sort(columns: [\"module_channel\"], desc: false)\n//  |> rename(columns: {\"_time\": \"timestamp\", \"1_iset\": \"I0Set\", \"3_imon\": \"IMon\", \"2_vset\": \"V0Set\", \"4_vmon\": \"VMon\"})\n",
+          "refId": "A"
+        }
+      ],
+      "title": "kikusui1",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "ee2sy3vroccu8e"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false,
+            "minWidth": 50
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
+      "id": 5,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "ee2sy3vroccu8e"
+          },
+          "query": "from(bucket: \"threshold\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"v895\" and r.vme_address == \"dd000000\")\n  |> map(fn: (r) => ({\n    r with module_channel: string(v: r[\"vme_address\"]) + \"-\" + string(v: r[\"channel\"])\n    }))\n//  |> map(fn: (r) => ({\n//    r with _field: if r._field == \"vset\" then \"2_vset\"\n//      else if r._field == \"vmon\" then \"4_vmon\"\n//      else if r._field == \"iset\" then \"1_iset\"\n//      else if r._field == \"imon\" then \"3_imon\"\n//      else r._field\n//  }))\n  |> pivot(rowKey: [\"module_channel\", \"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> keep(columns: [\"_time\", \"module_channel\", \"enable\", \"threshold\", \"width\"])\n  |> sort(columns: [\"_time\"], desc: true)\n  |> limit(n: 16)\n  |> sort(columns: [\"module_channel\"], desc: false)\n//  |> rename(columns: {\"_time\": \"timestamp\", \"1_iset\": \"I0Set\", \"3_imon\": \"IMon\", \"2_vset\": \"V0Set\", \"4_vmon\": \"VMon\"})\n",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "ee2sy3vroccu8e"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false,
+            "minWidth": 50
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 4
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "ee2sy3vroccu8e"
+          },
+          "query": "from(bucket: \"threshold\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"v895\" and r.vme_address == \"dd010000\")\n  |> map(fn: (r) => ({\n    r with module_channel: string(v: r[\"vme_address\"]) + \"-\" + string(v: r[\"channel\"])\n    }))\n//  |> map(fn: (r) => ({\n//    r with _field: if r._field == \"vset\" then \"2_vset\"\n//      else if r._field == \"vmon\" then \"4_vmon\"\n//      else if r._field == \"iset\" then \"1_iset\"\n//      else if r._field == \"imon\" then \"3_imon\"\n//      else r._field\n//  }))\n  |> pivot(rowKey: [\"module_channel\", \"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> keep(columns: [\"_time\", \"module_channel\", \"enable\", \"threshold\", \"width\"])\n  |> sort(columns: [\"_time\"], desc: true)\n  |> limit(n: 16)\n  |> sort(columns: [\"module_channel\"], desc: false)\n//  |> rename(columns: {\"_time\": \"timestamp\", \"1_iset\": \"I0Set\", \"3_imon\": \"IMon\", \"2_vset\": \"V0Set\", \"4_vmon\": \"VMon\"})\n",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "ee2sy3vroccu8e"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false,
+            "minWidth": 50
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "id": 2,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "ee2sy3vroccu8e"
+          },
+          "query": "from(bucket: \"threshold\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"v895\" and r.vme_address == \"dd020000\")\n  |> map(fn: (r) => ({\n    r with module_channel: string(v: r[\"vme_address\"]) + \"-\" + string(v: r[\"channel\"])\n    }))\n//  |> map(fn: (r) => ({\n//    r with _field: if r._field == \"vset\" then \"2_vset\"\n//      else if r._field == \"vmon\" then \"4_vmon\"\n//      else if r._field == \"iset\" then \"1_iset\"\n//      else if r._field == \"imon\" then \"3_imon\"\n//      else r._field\n//  }))\n  |> pivot(rowKey: [\"module_channel\", \"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> keep(columns: [\"_time\", \"module_channel\", \"enable\", \"threshold\", \"width\"])\n  |> sort(columns: [\"_time\"], desc: true)\n  |> limit(n: 16)\n  |> sort(columns: [\"module_channel\"], desc: false)\n//  |> rename(columns: {\"_time\": \"timestamp\", \"1_iset\": \"I0Set\", \"3_imon\": \"IMon\", \"2_vset\": \"V0Set\", \"4_vmon\": \"VMon\"})\n",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "ee2sy3vroccu8e"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false,
+            "minWidth": 50
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "id": 3,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "ee2sy3vroccu8e"
+          },
+          "query": "from(bucket: \"threshold\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"v895\" and r.vme_address == \"dd030000\")\n  |> map(fn: (r) => ({\n    r with module_channel: string(v: r[\"vme_address\"]) + \"-\" + string(v: r[\"channel\"])\n    }))\n//  |> map(fn: (r) => ({\n//    r with _field: if r._field == \"vset\" then \"2_vset\"\n//      else if r._field == \"vmon\" then \"4_vmon\"\n//      else if r._field == \"iset\" then \"1_iset\"\n//      else if r._field == \"imon\" then \"3_imon\"\n//      else r._field\n//  }))\n  |> pivot(rowKey: [\"module_channel\", \"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> keep(columns: [\"_time\", \"module_channel\", \"enable\", \"threshold\", \"width\"])\n  |> sort(columns: [\"_time\"], desc: true)\n  |> limit(n: 16)\n  |> sort(columns: [\"module_channel\"], desc: false)\n//  |> rename(columns: {\"_time\": \"timestamp\", \"1_iset\": \"I0Set\", \"3_imon\": \"IMon\", \"2_vset\": \"V0Set\", \"4_vmon\": \"VMon\"})\n",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "ee2sy3vroccu8e"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.3.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"threshold\")\n  |> range(start: 0)\n  |> filter(fn: (r) => r._measurement == \"v895\" and r.vme_address == \"dd000000\")\n//  |> drop(columns: [\"_time\", \"\"])\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> keep(columns: [\"_time\", \"enable\", \"threshold\", \"width\", \"channel\"])\n//  |> sort(columns: [\"_time\"], desc: true)\n//  |> limit(n: 16)\n//  |> sort(columns: [\"module_channel\"], desc: false)\n//  |> rename(columns: {\"_time\": \"timestamp\", \"1_iset\": \"I0Set\", \"3_imon\": \"IMon\", \"2_vset\": \"V0Set\", \"4_vmon\": \"VMon\"})\n",
+          "refId": "A"
+        }
+      ],
+      "title": "dd000000",
+      "type": "stat"
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 40,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Threshold",
+  "uid": "ce3az4j9dm48wc",
+  "version": 35,
+  "weekStart": ""
+}
