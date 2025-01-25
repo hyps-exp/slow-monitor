@@ -65,6 +65,13 @@
   [inputs.exec.tags]
     dest_bucket = "hddaq"
 
+[[inputs.exec]]
+  commands = ["python /home/sks/software/slow-monitor/telegraf.exec/trigger.py"]
+  timeout = "5s"
+  data_format = "influx"
+  [inputs.exec.tags]
+    dest_bucket = "trigger"
+
 # [[inputs.exec]]
 #   commands = ["python /home/sks/slow-monitor/python/caenhv-n1470.py"]
 #   timeout = "5s"
