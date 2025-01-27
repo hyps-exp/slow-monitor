@@ -228,13 +228,15 @@ def send_to_influxdb(run_summary):
     jst_time = datetime.strptime(run["Start Time"], "%Y %m/%d %H:%M:%S").replace(tzinfo=timezone(timedelta(hours=9)))
     utc_time = jst_time.astimezone(timezone.utc)
     point = Point("runsummary") \
-      .field("run_number", f'{int(run["Run Number"]):05d}') \
+      .tag("run_number", f'{int(run["Run Number"]):05d}') \
       .tag("start_time", run["Start Time"]) \
-      .tag("stop_time", run["Stop Time"]) \
-      .tag("comment", run["Comment"]) \
+      .field("stop_time", run["Stop Time"]) \
+      .field("comment", run["Comment"]) \
       .field("events", str(run["Events"]) if run["Events"] else '') \
       .field("datasize", str(run["Data Size (bytes)"]) if run["Data Size (bytes)"] else '') \
       .field("storage_ring_current", str(run["Storage Ring Current"]) if run["Storage Ring Current"] else '') \
+      .field("tagger_rate", str(run["Tagger Rate (Hz)"]) if run["Tagger Rate (Hz)"] else '') \
+      .field("t0_tagger", str(run["T0/Tagger Ratio"]) if run["T0/Tagger Ratio"] else '') \
       .field("l1_req", str(run["L1 Req. (Hz)"]) if run["L1 Req. (Hz)"] else '') \
       .field("daq_eff", str(run["DAQ Efficiency"]) if run["DAQ Efficiency"] else '') \
       .field("live_real", str(run["LiveTime/RealTime"]) if run["LiveTime/RealTime"] else '') \
