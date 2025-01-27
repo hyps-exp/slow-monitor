@@ -74,3 +74,11 @@
   data_format = "influx"
   [inputs.exec.tags]
     dest_bucket = "threshold"
+
+[[inputs.exec]]
+  commands = ["python /home/sks/slow-monitor/telegraf.exec/accelerator.py"]
+  interval = "30s"
+  flush_interval = "30s"
+  data_format = "influx"
+  [inputs.exec.tags]
+    dest_bucket = "accelerator"
