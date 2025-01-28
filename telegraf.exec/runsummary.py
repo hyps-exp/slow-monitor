@@ -4,6 +4,8 @@ import re
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 
+import googlesheet
+
 host = 'db-hyps'
 influxdb_url = f'http://{host}:8086'
 token = '-iT93bQ-4tDWCQVR42vBoRbE58wzxIWsDYB6S4vfgR9BiiRSrfoR90OpaYXtaBuEkAPgfrv0YrFtqQPFFn81Vg=='
@@ -266,7 +268,7 @@ def send_to_influxdb(run_summary):
     # utc_time = jst_time.astimezone(timezone.utc)
     line_protocol = (f'runsummary,'
                      f'run_number={int(run["Run Number"]):05d},'
-                     f'start_time="{run["Start Time"]}" '
+                     f'start_time={run["Start Time"]} '
                      f'stop_time="{run["Stop Time"]}",'
                      f'comment="{run["Comment"]}",'
                      f'events="{run["Events"] if run["Events"] else ""}",'
@@ -311,4 +313,5 @@ if __name__ == '__main__':
   run_summary = query_influxdb(run_summary)
   save_to_csv(run_summary, output_csv)
   send_to_influxdb(run_summary)
+  googlesheet.update()
   client.close()
