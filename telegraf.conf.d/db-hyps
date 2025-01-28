@@ -82,3 +82,19 @@
   data_format = "influx"
   [inputs.exec.tags]
     dest_bucket = "accelerator"
+
+[[inputs.exec]]
+  commands = ["python /home/sks/slow-monitor/telegraf.exec/sync.py"]
+  interval = "600s"
+  flush_interval = "600s"
+  data_format = "influx"
+  [inputs.exec.tags]
+    dest_bucket = "sync"
+
+[[inputs.exec]]
+  commands = ["sudo -u sks python /home/sks/slow-monitor/telegraf.exec/runsummary.py"]
+  interval = "120s"
+  flush_interval = "120s"
+  data_format = "influx"
+  [inputs.exec.tags]
+    dest_bucket = "runsummary"
