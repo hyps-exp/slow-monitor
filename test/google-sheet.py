@@ -43,15 +43,16 @@ requests = {
       "repeatCell": {
         "range": {
           "sheetId": worksheet.id,
-          "startRowIndex": 1,  # 0ベースの行番号 (ヘッダーを含める場合は0)
-          "startColumnIndex": 4,  # E列の開始 (A=0, B=1, ..., E=4)
-          "endColumnIndex": 6   # E列の終了
+          "startRowIndex": 1,
+          "startColumnIndex": 0,
+          "endColumnIndex": 1
         },
         "cell": {
           "userEnteredFormat": {
             "numberFormat": {
               "type": "NUMBER",
-              "pattern": "#,##0"  # カンマ区切りの整数フォーマット
+              #"pattern": "#,##0.000000"
+              "pattern": "0"
             }
           }
         },
@@ -76,9 +77,9 @@ requests = {
 #           "ranges": [
 #             {
 #               "sheetId": worksheet.id,
-#               "startRowIndex": 0,  # 0ベースで指定（ヘッダーを含む）
-#               "startColumnIndex": 0,  # 行全体の開始（A列）
-#               "endColumnIndex": worksheet.col_count  # 最終列まで
+#               "startRowIndex": 0,
+#               "startColumnIndex": 0,
+#               "endColumnIndex": worksheet.col_count
 #             }
 #           ],
 #           "booleanRule": {
@@ -95,14 +96,14 @@ requests = {
 #             },
 #             "format": {
 #               "backgroundColor": {
-#                 "red": 0.3,   # ピンク色
+#                 "red": 0.3,
 #                 "green": 0.8,
 #                 "blue": 0.4
 #               }
 #             }
 #           }
 #         },
-#         "index": 0  # ルールの優先順位
+#         "index": 0
 #       }
 #     }
   ]
