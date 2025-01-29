@@ -40,9 +40,8 @@ for b in bucket_names:
   query = f"""
 from(bucket: "{b}")
   |> range(start: {start_iso}, stop: {end_iso})
-//  |> range(start: -1m)
   |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
-//  |> experimental.setTimezone(timezone: "Asia/Tokyo")
+  |> group()
   |> sort(columns: ["_time"], desc: false)
 """
   # |> range(start: time(v: today() - 1d), stop: time(v: today()))

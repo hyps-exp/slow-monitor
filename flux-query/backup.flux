@@ -1,0 +1,5 @@
+from(bucket: "caenhv")
+  |> range(start: -30s)
+  |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
+  |> group()
+  |> sort(columns: ["_time"], desc: false)
