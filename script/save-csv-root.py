@@ -35,7 +35,8 @@ end_iso = end_iso[:-2] + ":" + end_iso[-2:]
 print(start_iso)
 print(end_iso)
 
-output_root = f"test.root"
+# output_root = f"test.root"
+output_root = os.path.join(output_dir, 'root', f'hyps-influxdb2-{yesterday_date}.root')
 with uproot.recreate(output_root) as root_file:
   for b in bucket_names:
     print('='*80)
@@ -58,7 +59,7 @@ with uproot.recreate(output_root) as root_file:
     if len(df) == 0:
       print('Skipped empty bucket')
       continue
-    output_file = os.path.join(output_dir, f'{b}-{yesterday_date}.csv.gz')
+    output_file = os.path.join(output_dir, 'csv', f'{b}-{yesterday_date}.csv.gz')
     for t in ['_start', '_stop', '_time']:
       if t in df:
         df[t] = pd.to_datetime(df[t]).dt.tz_convert("Asia/Tokyo")

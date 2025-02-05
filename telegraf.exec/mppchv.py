@@ -71,6 +71,6 @@ if __name__ == '__main__':
       trip = int(trip)
       status = 1 if vmon > 39.0 else 0
       if present_time > data_time + 20:
-        status = "NOUPDATE"
+        status = -1
       date_time = datetime.fromtimestamp(data_time).strftime("%Y-%m-%d %H:%M:%S")
       write_to_influx_format(summary_out, ip, channel, name, status, date_time, vset, vmon, iset, imon, temp, trip)

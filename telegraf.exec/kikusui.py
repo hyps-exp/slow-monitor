@@ -107,6 +107,8 @@ if __name__ == '__main__':
   hosts = ['kikusui1']
   for host in hosts:
     pmxa = PMX_A(host, timeout=1.0, debug=True)
+    if not pmxa.is_open:
+      continue
     idn = pmxa.idn()
     vmon = pmxa.volt()
     imon = pmxa.curr()
