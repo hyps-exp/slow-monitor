@@ -23,12 +23,15 @@ def read_comment(path=comment_txt):
     last_colon_index = last_line.rfind(':')
     if last_colon_index != -1:
       comment = last_line[last_colon_index + 1:].strip()
-      return comment.replace(',', '.').replace('"', '_').replace("'", '_')
+      mtime_ns = int(os.path.getmtime(path) * 1_000_000_000)
+      return (comment.replace(',', '.').replace('"', '_').replace("'", '_'),
+              mtime_ns)
 
 #______________________________________________________________________________
 if __name__ == '__main__':
-  print(f'hddaq,data_dir="{data_dir}" runnumber={read(runno_txt)}i,'+
+  comment, mtime_ns = read_comment()
+  print(f'hddaq,data_dir={data_dir} runnumber={read(runno_txt)}i,'+
         f'starttime="{read(starttime_txt)}",'+
         f'maxevent={read(maxevent_txt)}i,'+
         f'trig="{read(trig_txt)}",'+
-        f'comment="{read_comment()}"')
+        f'comment="{comment}" {mtime_ns}')
