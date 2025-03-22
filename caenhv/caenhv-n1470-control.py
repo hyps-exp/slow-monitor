@@ -11,16 +11,22 @@ import influxdb
 HOST = '127.0.0.1'
 PORT = 5000
 
+channel_names = [
+  ["SAC-1", "SAC-2", "SAC-3", "SAC-4"], # module_id = 0
+  ["eVETO-L", "eVETO-R", "T0-L", "T0-R"], # module_id = 1
+]
+
 class CaenN1470Controller:
   n_channel = 4
 
-  def __init__(self, module_id_list):
+  def __init__(self, module_id_list, channel_name_list):
     self.module_id_list = module_id_list
+    self.channel_name_list = channel_name_list
     self.selected_module = 0
     self.selected_channel = 0
     self.current_field = 0
 
-controller = CaenN1470Controller(module_id_list=[0, 1])
+controller = CaenN1470Controller(module_id_list=[0, 1], channel_name_list=channel_names)
 
 fields = ["ISET", "VSET", "Power"]
 power_state = {(module_id, ch): "OFF" for module_id in controller.module_id_list for ch in range(CaenN1470Controller.n_channel)}
@@ -94,13 +100,18 @@ from(bucket: "{bucket}")
 def display_table(stdscr):
   stdscr.clear()
   stdscr.addstr(0, 0, "Use ARROW keys to navigate, ENTER to edit, SPACE to toggle Power, 'q' to quit")
-  stdscr.addstr(2, 0, '           I0Set       V0Set        IMon        VMon     Pw   Status')
+  stdscr.addstr(2, 0, '                      I0Set       V0Set        IMon        VMon     Pw   Status')
   row_idx = 3
   for module_id in controller.module_id_list:
     for channel in range(CaenN1470Controller.n_channel):
       highlight_row = (module_id == controller.selected_module and channel == controller.selected_channel)
       row_style = curses.A_REVERSE if highlight_row else curses.A_NORMAL
-      stdscr.addstr(row_idx, 0, f"{module_id:02d}-{channel:03d} | ", curses.A_NORMAL)
+      channel_name = (
+        controller.channel_name_list[module_id][channel]
+        if module_id < len(controller.channel_name_list) and channel < len(controller.channel_name_list[module_id])
+        else f'John Doe'
+      )
+      stdscr.addstr(row_idx, 0, f"{module_id:02d}-{channel:03d} | {channel_name:^8} | ", curses.A_NORMAL)
       for field_idx, field in enumerate(['iset', 'vset', #'imon', 'vmon',
                     'power', #'status'
                     ]):
