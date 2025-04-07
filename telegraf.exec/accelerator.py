@@ -1,5 +1,3 @@
-import sys
-sys.path.append('/home/sks/.local/lib/python3.9/site-packages')
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
@@ -28,6 +26,7 @@ def parse(url):
   iso_format = datetime_obj.isoformat() + "Z"
   unix_ns = int(datetime_obj.timestamp() * 1e9)
   elements = soup.find_all(attrs={"bgcolor": "#B2C1FF"})
+  elements += soup.find_all(attrs={"bgcolor": "#99ACFF"})
   beam_str = []
   for e in elements:
     match = re.match(r"([0-9.]+)([a-zA-Z]+)", e.text.strip())
@@ -35,9 +34,17 @@ def parse(url):
       value = float(match.group(1))
       unit = match.group(2)
       beam_str.append((value, unit))
-  print(f'storage_ring '
-        f'current={beam_str[0][0]},current_unit="{beam_str[0][1]}",'
-        f'energy={beam_str[1][0]},energy_unit="{beam_str[1][1]}" {unix_ns}')
+    else:
+      match = re.match(r"([0-9.]+) ([a-zA-Z]+)", e.text.strip())
+      if match:
+        value = float(match.group(1))
+        unit = match.group(2)
+        beam_str.append((value, unit))
+  if len(beam_str) == 3:
+    print(f'storage_ring '
+          f'current={beam_str[0][0]},current_unit="{beam_str[0][1]}",'
+          f'energy={beam_str[1][0]},energy_unit="{beam_str[1][1]}",'
+          f'pattern={beam_str[2][0]},pattern_unit="{beam_str[2][1]}" {unix_ns}')
 
 #______________________________________________________________________________
 if __name__ == '__main__':
