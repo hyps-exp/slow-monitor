@@ -53,6 +53,7 @@ def parse_comment(comment_path, recorder_log_path):
         "Events": recorder_data.get(run_number, {}).get("Events", ""),
         "Data Size (bytes)": recorder_data.get(run_number, {}).get("Data Size (bytes)", ""),
         "Storage Ring Current": "",
+        "Filling Pattern": "",
         "Tagger Rate (Hz)": "",
         "T0/Tagger Ratio": "",
         "L1 Req. (Hz)": "",
@@ -119,6 +120,18 @@ def query_influxdb(run_summary):
         for record in table.records:
           if record.get_field() == "current":
             run["Storage Ring Current"] = float(record.get_value())
+      # accelerator
+      query = f'''
+      from(bucket: "accelerator")
+        |> range(start: {start_time}, stop: {stop_time})
+        |> filter(fn: (r) => r._field == "pattern")
+        |> mean()
+      '''
+      result = query_api(query=query)
+      for table in result:
+        for record in table.records:
+          if record.get_field() == "pattern":
+            run["Filling Pattern"] = float(record.get_value())
       # scaler
       query = f'''
       from(bucket: "scaler")
@@ -141,7 +154,7 @@ def query_influxdb(run_summary):
             run["LiveTime/RealTime"] = float(record.get_value())
           elif record.get_field() == "Duty":
             run["Duty"] = float(record.get_value())
-      # accelerator
+      # trigger
       query = f'''
       from(bucket: "trigger")
         |> range(start: 0, stop: {stop_time})
@@ -175,6 +188,7 @@ def save_to_csv(run_summary, output_csv):
       "Run Number", "Start Time", "Stop Time", "Comment",
       "Events", "Data Size (bytes)",
       "Storage Ring Current",
+      "Filling Pattern",
       "Tagger Rate (Hz)",
       "T0/Tagger Ratio",
       "L1 Req. (Hz)",
@@ -274,6 +288,7 @@ def send_to_influxdb(run_summary):
                      f'events="{run["Events"] if run["Events"] else ""}",'
                      f'datasize="{run["Data Size (bytes)"] if run["Data Size (bytes)"] else ""}",'
                      f'storage_ring_current="{run["Storage Ring Current"] if run["Storage Ring Current"] else ""}",'
+                     f'filling_pattern="{run["Filling Pattern"] if run["Filling Pattern"] else ""}",'
                      f'tagger_rate="{run["Tagger Rate (Hz)"] if run["Tagger Rate (Hz)"] else ""}",'
                      f't0_tagger="{run["T0/Tagger Ratio"] if run["T0/Tagger Ratio"] else ""}",'
                      f'l1_req="{run["L1 Req. (Hz)"] if run["L1 Req. (Hz)"] else ""}",'

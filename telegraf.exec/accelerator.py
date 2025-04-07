@@ -27,6 +27,7 @@ def parse(url):
   unix_ns = int(datetime_obj.timestamp() * 1e9)
   elements = soup.find_all(attrs={"bgcolor": "#B2C1FF"})
   elements += soup.find_all(attrs={"bgcolor": "#99ACFF"})
+  elements += soup.find_all(attrs={"bgcolor": "#E5EAFF"})
   beam_str = []
   for e in elements:
     match = re.match(r"([0-9.]+)([a-zA-Z]+)", e.text.strip())
@@ -40,11 +41,16 @@ def parse(url):
         value = float(match.group(1))
         unit = match.group(2)
         beam_str.append((value, unit))
-  if len(beam_str) == 3:
+      else:
+        value = e.text.strip()
+        unit = ''
+        beam_str.append((value, unit))
+  if len(beam_str) == 4:
     print(f'storage_ring '
           f'current={beam_str[0][0]},current_unit="{beam_str[0][1]}",'
           f'energy={beam_str[1][0]},energy_unit="{beam_str[1][1]}",'
-          f'pattern={beam_str[2][0]},pattern_unit="{beam_str[2][1]}" {unix_ns}')
+          f'pattern={beam_str[2][0]},pattern_unit="{beam_str[2][1]}",'
+          f'mode="{beam_str[3][0]}" {unix_ns}')
 
 #______________________________________________________________________________
 if __name__ == '__main__':
