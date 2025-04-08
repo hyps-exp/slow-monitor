@@ -100,6 +100,14 @@
     dest_bucket = "target"
 
 [[inputs.exec]]
+  commands = ["python /home/sks/slow-monitor/telegraf.exec/vme-easiroc.py"]
+  interval = "600s"
+  flush_interval = "600s"
+  data_format = "influx"
+  [inputs.exec.tags]
+    dest_bucket = "vme-easiroc"
+
+[[inputs.exec]]
   commands = ["sudo -u sks python /home/sks/slow-monitor/telegraf.exec/runsummary.py"]
   interval = "600s"
   timeout = "30s"
