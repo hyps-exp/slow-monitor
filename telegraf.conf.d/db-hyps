@@ -92,6 +92,14 @@
     dest_bucket = "sync"
 
 [[inputs.exec]]
+  commands = ["python /home/sks/slow-monitor/telegraf.exec/target.py"]
+  interval = "20s"
+  flush_interval = "20s"
+  data_format = "influx"
+  [inputs.exec.tags]
+    dest_bucket = "target"
+
+[[inputs.exec]]
   commands = ["sudo -u sks python /home/sks/slow-monitor/telegraf.exec/runsummary.py"]
   interval = "600s"
   timeout = "30s"
