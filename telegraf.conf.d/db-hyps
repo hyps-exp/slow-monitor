@@ -110,7 +110,7 @@
 [[inputs.exec]]
   commands = ["sudo -u sks python /home/sks/slow-monitor/telegraf.exec/runsummary.py"]
   interval = "600s"
-  timeout = "30s"
+  timeout = "300s"
   flush_interval = "600s"
   data_format = "influx"
   [inputs.exec.tags]

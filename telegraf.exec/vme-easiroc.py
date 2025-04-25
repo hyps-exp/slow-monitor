@@ -114,8 +114,36 @@ def parse_register_value(path, timestamp):
   return f"{measurement},{tag_str} {field_str} {timestamp}"
 
 #______________________________________________________________________________
+def read_symlink():
+  measurement = 'symlink'
+  symlinks = {'input_dac': 'InputDAC',
+              'pede_sup': 'PedeSup',
+              'register': 'RegisterValue'}
+  fields = {}
+  timestamps = []
+  for key, path in symlinks.items():
+    path = os.path.join(register_dir, path)
+    try:
+      target = os.readlink(path)
+      abs_target = os.path.abspath(target)
+    except OSError:
+      abs_target = 'unknown'
+    try:
+      stat = os.lstat(path)
+      timestamps.append(stat.st_mtime)
+    except OSError:
+      timestamps.append(0)
+    fields[key] = f'"{abs_target}"'
+  latest_mtime = max(timestamps)
+  timestamp_ns = int(latest_mtime * 1e9)
+  field_str = ",".join(f"{k}={v}" for k, v in fields.items())
+  print(f"{measurement} {field_str} {timestamp_ns}")
+
+#______________________________________________________________________________
 def main():
   timestamp = int(time.time() * 1e9)
+
+  read_symlink()
 
   for file_path in sorted(glob.glob(
       os.path.join(register_dir, 'InputDAC', 'InputDAC_*.yml'))):

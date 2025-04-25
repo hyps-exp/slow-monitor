@@ -8,8 +8,8 @@ last_log = f'/home/sks/software/trig-control/last.log'
 
 NumOfRegion2 = 6
 BeamDetectors = ['BH1', 'T0', 'UVETO', 'HTOF', 'Other1', 'Other2']
-ScatDetectors = ['BEAM', 'AC', 'EVETO', 'TOF-unused',
-                 'TOF', 'Clock1k', 'M2D1', 'M2D2',
+ScatDetectors = ['BEAM', 'SAC', 'EVETO', 'TOF-unused',
+                 'TOF', 'Clock1k', 'L1ACC', 'TAG',
                  'M3D', 'BGO', 'CFT']
 
 #______________________________________________________________________________
@@ -17,11 +17,11 @@ def is_updated(path, threshold):
   if not os.path.exists(path):
     return 0
   mtime = os.path.getmtime(path)
-  current_time = time.time()
-  if current_time - mtime <= threshold:
-    return mtime
-  else:
-    return 0
+  # current_time = time.time()
+  # if current_time - mtime <= threshold:
+  return mtime
+  # else:
+  #   return 0
 
 #______________________________________________________________________________
 def bps(ctrl, coin):
@@ -93,8 +93,8 @@ def onoff(val, char=False):
 
 #______________________________________________________________________________
 if __name__ == '__main__':
-  mtime = is_updated(last_log, threshold=9)
-  if mtime > 0:
+    mtime = is_updated(last_log, threshold=9)
+  # if mtime > 0:
     param = {}
     with open(last_log, 'r') as f:
       for line in f.readlines():
@@ -132,4 +132,4 @@ if __name__ == '__main__':
         print(f'trig_{abc.lower()}="{scat}",'
               f'trig_{abc.lower()}_ps="{ps}",'
               f'trig_{abc.lower()}_gate="{g}"',
-              end = ',' if i != NumOfRegion2 - 1 else '\n')
+              end = ',' if i != NumOfRegion2 - 1 else f' {int(mtime*1e9)}\n')
