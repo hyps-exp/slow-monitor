@@ -11,13 +11,6 @@ influxdb_url = f'http://{host}:8086'
 token = '-iT93bQ-4tDWCQVR42vBoRbE58wzxIWsDYB6S4vfgR9BiiRSrfoR90OpaYXtaBuEkAPgfrv0YrFtqQPFFn81Vg=='
 org = 'hyps'
 
-
-# The notation that used in the filed names for scaler was changed from "All" to "ALL", which means
-#  - "TAG_All_Hz" -> "TAG_ALL_Hz"
-#  - "T0_TAG_All" -> "T0_TAG_ALL"
-# The boundary time is 2025-05-27 03:33:10 (JST)
-boundary = datetime(2025, 5, 27, 3, 33, 10, tzinfo=timezone(timedelta(hours=9)))
-
 #______________________________________________________________________________
 def parse_comment(comment_path, recorder_log_path):
   with open(comment_path, 'r') as f:
@@ -103,75 +96,6 @@ def query_api(query):
   return client.query_api().query(query)
 
 #______________________________________________________________________________
-def fetch_scaler(start_time, stop_time, run):
-  def _query(start, stop, fields):
-    filter_str = ' or '.join([f'r._field == "{f}"' for f in fields])
-    query = f'''
-    from(bucket: "scaler")
-      |> range(start: {start}, stop: {stop})
-      |> filter(fn: (r) => {filter_str})
-      |> mean()
-    '''
-    values = {}
-    result = query_api(query=query)
-    for table in result:
-      for record in table.records:
-        values[record.get_field()] = record.get_value()
-    return values
-
-  old_fields = ['TAG_All_Hz', 'L1_Req_Hz', 'T0_TAG_All', 'DAQ_Eff', 'Live_Real', 'Duty']
-  new_fields = ['TAG_ALL_Hz', 'L1_Req_Hz', 'T0_TAG_ALL', 'DAQ_Eff', 'Live_Real', 'Duty']
-
-  tz_jst = timezone(timedelta(hours=9))
-  run_start = datetime.fromisoformat(start_time).astimezone(tz_jst)
-  run_stop  = datetime.fromisoformat(stop_time).astimezone(tz_jst)
-
-  # case1: Run before the boundary
-  if run_stop <= boundary:
-    values = _query(start_time, stop_time, old_fields)
-    tag_key, t0_key = 'TAG_All_Hz', 'T0_TAG_All'
-
-  # case2: Run after the boudary
-  elif run_start >= boundary:
-    values = _query(start_time, stop_time, new_fields)
-    tag_key, t0_key = 'TAG_ALL_Hz', 'T0_TAG_ALL'
-
-  # case3: Run straddles the boundary
-  else:
-    boundary_iso = boundary.isoformat()
-    v_old = _query(start_time,   boundary_iso, old_fields)
-    v_new = _query(boundary_iso, stop_time,    new_fields)
-    values = {}
-    for old_k, new_k in [('TAG_All_Hz', 'TAG_ALL_Hz'), ('T0_TAG_All', 'T0_TAG_ALL')]:
-      if old_k in v_old and new_k in v_new:
-        values[new_k] = (v_old[old_k] + v_new[new_k]) / 2
-      elif old_k in v_old:
-        values[new_k] = v_old[old_k]
-      elif new_k in v_new:
-        values[new_k] = v_new[new_k]
-    for common_k in ['L1_Req_Hz', 'DAQ_Eff', 'Live_Real', 'Duty']:
-      if common_k in v_old and common_k in v_new:
-        values[common_k] = (v_old[common_k] + v_new[common_k]) / 2
-      elif common_k in v_old:
-        values[common_k] = v_old[common_k]
-      elif common_k in v_new:
-        values[common_k] = v_new[common_k]
-    tag_key, t0_key = 'TAG_ALL_Hz', 'T0_TAG_ALL'
-
-  if tag_key in values:
-    run['Tagger Rate (Hz)'] = int(values[tag_key])
-  if 'L1_Req_Hz' in values:
-    run['L1 Req. (Hz)'] = int(values['L1_Req_Hz'])
-  if t0_key in values:
-    run['T0/Tagger Ratio'] = float(values[t0_key])
-  if 'DAQ_Eff' in values:
-    run['DAQ Efficiency'] = float(values['DAQ_Eff'])
-  if 'Live_Real' in values:
-    run['LiveTime/RealTime'] = float(values['Live_Real'])
-  if 'Duty' in values:
-    run['Duty'] = float(values['Duty'])
-
-#______________________________________________________________________________
 def query_influxdb(run_summary):
   tz_jst = timezone(timedelta(hours=9))
   for run in run_summary:
@@ -209,7 +133,51 @@ def query_influxdb(run_summary):
           if record.get_field() == "pattern":
             run["Filling Pattern"] = float(record.get_value())
       # scaler
-      fetch_scaler(start_time, stop_time, run)
+      ### Until 2025/05/27 3:33
+      # query = f'''
+      # from(bucket: "scaler")
+      #   |> range(start: {start_time}, stop: {stop_time})
+      #   |> filter(fn: (r) => r._field == "TAG_All_Hz" or r._field == "L1_Req_Hz" or r._field == "T0_TAG_All" or r._field == "DAQ_Eff" or r._field == "Live_Real" or r._field == "Duty")
+      #   |> mean()
+      # '''
+      # result = query_api(query=query)
+      # for table in result:
+      #   for record in table.records:
+      #     if record.get_field() == "TAG_All_Hz":
+      #       run["Tagger Rate (Hz)"] = int(record.get_value())
+      #     elif record.get_field() == "L1_Req_Hz":
+      #       run["L1 Req. (Hz)"] = int(record.get_value())
+      #     elif record.get_field() == "T0_TAG_All":
+      #       run["T0/Tagger Ratio"] = float(record.get_value())
+      #     elif record.get_field() == "DAQ_Eff":
+      #       run["DAQ Efficiency"] = float(record.get_value())
+      #     elif record.get_field() == "Live_Real":
+      #       run["LiveTime/RealTime"] = float(record.get_value())
+      #     elif record.get_field() == "Duty":
+      #       run["Duty"] = float(record.get_value())
+
+      ### After 2025/05/27 3:33, Notation changed from All -> ALL (TAG_All_Hz -> TAG_ALL_Hz, T0_TAG_All -> T0_TAG_ALL)
+      query = f'''
+      from(bucket: "scaler")
+        |> range(start: {start_time}, stop: {stop_time})
+        |> filter(fn: (r) => r._field == "TAG_ALL_Hz" or r._field == "L1_Req_Hz" or r._field == "T0_TAG_ALL" or r._field == "DAQ_Eff" or r._field == "Live_Real" or r._field == "Duty")
+        |> mean()
+      '''
+      result = query_api(query=query)
+      for table in result:
+        for record in table.records:
+          if record.get_field() == "TAG_ALL_Hz":
+            run["Tagger Rate (Hz)"] = int(record.get_value())
+          elif record.get_field() == "L1_Req_Hz":
+            run["L1 Req. (Hz)"] = int(record.get_value())
+          elif record.get_field() == "T0_TAG_ALL":
+            run["T0/Tagger Ratio"] = float(record.get_value())
+          elif record.get_field() == "DAQ_Eff":
+            run["DAQ Efficiency"] = float(record.get_value())
+          elif record.get_field() == "Live_Real":
+            run["LiveTime/RealTime"] = float(record.get_value())
+          elif record.get_field() == "Duty":
+            run["Duty"] = float(record.get_value())
       # trigger
       query = f'''
       from(bucket: "trigger")
@@ -235,21 +203,6 @@ def query_influxdb(run_summary):
                 run["Trig" + abc.upper()] = ''
               else:
                 run["Trig" + abc.upper() + '-Gate'] = record.get_value()
-
-      ### for debug
-      # if run["Run Number"] in ["2160", "2163", "5737"]:
-      #   print(f"Run #{run['Run Number']}")
-      #   print(f"  Start: {run['Start Time']}, Stop: {run['Stop Time']}")
-      #   print(f"  Filling Pattern : {run.get('Filling Pattern', 'N/A')}")
-      #   print(f"  Storage Ring Current: {run.get('Storage Ring Current', 'N/A')}")
-      #   print(f"  Tagger Rate (Hz): {run.get('Tagger Rate (Hz)', 'N/A')}")
-      #   print(f"  L1 Req. (Hz)    : {run.get('L1 Req. (Hz)', 'N/A')}")
-      #   print(f"  T0/Tagger Ratio : {run.get('T0/Tagger Ratio', 'N/A')}")
-      #   print(f"  DAQ Efficiency  : {run.get('DAQ Efficiency', 'N/A')}")
-      #   print(f"  LiveTime/RealTime: {run.get('LiveTime/RealTime', 'N/A')}")
-      #   print(f"  Duty            : {run.get('Duty', 'N/A')}")
-      #   print()
-
   return run_summary
 
 #______________________________________________________________________________
