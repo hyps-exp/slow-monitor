@@ -92,6 +92,8 @@ def parse_comment(comment_path, recorder_log_path):
     elif status.startswith("STOP"):
       if current_run and current_run["Run Number"] == run_number:
         current_run["Stop Time"] = f"{date}-{time}"
+        if comment:
+          current_run["Comment"] = comment
 
   # if current_run:
   #   run_summary.append(current_run)
