@@ -217,6 +217,7 @@ def query_influxdb(run_summary):
       from(bucket: "trigger")
         |> range(start: 0, stop: {stop_time})
         |> filter(fn: (r) => r._measurement == "trigger")
+        |> group(columns: ["_field"])
         |> sort(columns: ["_time"], desc: true)
         |> limit(n: 1)
       '''
